@@ -1,0 +1,5 @@
+{
+  "name": "Language Comprehension Accelerator",
+  "description": "An application to help users accelerate their French language comprehension through structured listening and recall exercises. Users can work with sentences in chunks, listen to target and translated audio, and practice active recall.",
+  "requestFramePermissions": []
+}
