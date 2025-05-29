@@ -4,12 +4,18 @@ on:
   push:
     branches: [main]
 
+# ADD THIS PERMISSIONS BLOCK
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Important for GH Pages action
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -25,5 +31,9 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
+          # USE THIS TOKEN FORMAT
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
+          # ADD THESE LINES
+          force_orphan: true
+          keep_files: false
