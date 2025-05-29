@@ -1,0 +1,59 @@
+ame: Deploy to GitHub Pages
+
+on:
+  push: # Trigger the workflow on pushes
+    branches:
+      - main # Or your default branch if it's not 'main'
+  workflow_dispatch: # Allows you to manually trigger the workflow from the Actions tab
+
+permissions:
+  contents: read
+  pages: write # Needed to deploy to GitHub Pages
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" # Or your preferred Node.js version
+          cache: "npm"
+
+      - name: Install dependencies 📦
+        run: npm ci # 'npm ci' is generally faster and more reliable for CI
+
+      - name: Check for @vitejs/plugin-react # DEBUGGING STEP
+        run: |
+          echo "Listing node_modules/@vitejs..."
+          ls -la node_modules/@vitejs || echo "@vitejs directory not found or ls failed"
+          echo "Checking for plugin-react specifically..."
+          if [ -d "node_modules/@vitejs/plugin-react" ]; then
+            echo "@vitejs/plugin-react IS PRESENT."
+          else
+            echo "@vitejs/plugin-react IS MISSING."
+          fi
+          echo "Listing direct contents of node_modules (first 20 entries)..."
+          ls -la node_modules | head -n 20 || echo "node_modules directory not found or ls failed"
+
+      - name: Build application 🛠️
+        # This uses the "build" script from your package.json: "vite build"
+        run: npm run build
+        # If your vite.config.js already sets the base, you don't need to pass it here.
+
+      - name: Setup Pages 📃
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact ⬆️
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Vite builds to 'dist' by default. If you've changed this in vite.config.js, update the path.
+          path: ./dist
+
+      - name: Deploy to GitHub Pages 🚀
+        id: deployment
+        uses: actions/deploy-pages@v4
